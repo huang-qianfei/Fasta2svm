@@ -9,19 +9,19 @@ python fasta2svm.py
 -b                    	当模型中不存在该词的词向量的时候用b填充，默认0  
 -sg          		0 -cbow   1 skip-gram（default =1）  
 -hs           	0 -负采样   1 层序softmax ，default=0  
--window_size   	上下文最大距离
--model      	词向量模型名字  默认model.model
--hidden_size    	词向量的生成维度， default=100
--testfasta   	测试集fasta文件
--testword   	测试集分词文件名字，默认testword.txt
--testpos    	测试集正例
--testneg  		反例
--testcsv  		测试集 csv 默认 test.csv
--mms   		默认False  是否使用归一化
--ss      		默认False  是否使用标准化
--cv   		交叉验证折数
--n_job   		线程数 默认使用最大线程
-——————————————————————————————————————
+-window_size   	上下文最大距离  
+-model      	词向量模型名字  默认model.model  
+-hidden_size    	词向量的生成维度， default=100  
+-testfasta   	测试集fasta文件  
+-testword   	测试集分词文件名字，默认testword.txt  
+-testpos    	测试集正例  
+-testneg  		反例  
+-testcsv  		测试集 csv 默认 test.csv  
+-mms   		默认False  是否使用归一化  
+-ss      		默认False  是否使用标准化  
+-cv   		交叉验证折数  
+-n_job   		线程数 默认使用最大线程  
+*********************************
 必须设置的参数有三个
 -trainfasta
 -trainpos
