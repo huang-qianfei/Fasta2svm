@@ -1,8 +1,14 @@
 # Fasta2svm
 
 python fasta2svm.py  
-参数|取值  
--trainfasta    训练集fasta文件
+| 星期        | 车次           | 时间  |
+| ------------- |:-------------:| -----:|
+| 星期一      |G1008 | 4:30 |
+|  星期二  | G1006      |  14:55 |
+|  星期三   | G1007    |   18:30 |
+|参数|取值|
+| ------------- |:-------------:| -----:|
+|-trainfasta |   训练集fasta文件  |
 -trainword   训练集分词的文件名，默认trainword.txt  
 -trainpos    	正例数  
 -trainneg       	反例数  
