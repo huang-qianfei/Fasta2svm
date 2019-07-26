@@ -2,8 +2,9 @@
 
 python fasta2svm.py  
 * 参数设置  
--trainfasta   &训练集fasta文件    
--trainword   &训练集分词的文件名，默认trainword.txt   
+|:-:|:-:|  
+|-trainfasta|训练集fasta文件|    
+|-trainword|训练集分词的文件名，默认trainword.txt|   
 -trainpos    	正例数  
 -trainneg       	反例数  
 -traincsv       	 csv名字 默认train.csv  
