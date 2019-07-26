@@ -43,7 +43,7 @@ def save_wordfile(fastafile, wordfile, kmer):
         else:
             string += document
             string = string.strip()
-    b = [string[i:i + 3] for i in range(len(string)) if i < len(string) - 2]
+    b = [string[i:i + kmer] for i in range(len(string)) if i < len(string) - k]
     word = " ".join(b)
     f1.write(word)
     f1.write("\n")
