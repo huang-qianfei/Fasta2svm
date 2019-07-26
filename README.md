@@ -1,9 +1,9 @@
 # Fasta2svm
 
 python fasta2svm.py  
-|参数|取值|  
--trainfasta   训练集fasta文件  
--trainword   训练集分词的文件名，默认trainword.txt  
+* 参数设置  
+-trainfasta   &训练集fasta文件    
+-trainword   &训练集分词的文件名，默认trainword.txt   
 -trainpos    	正例数  
 -trainneg       	反例数  
 -traincsv       	 csv名字 默认train.csv  
@@ -24,7 +24,7 @@ python fasta2svm.py
 -cv   		交叉验证折数  
 -n_job   		线程数 默认使用最大线程  
 *********************************
-必须设置的参数有三个  
+* 必须设置的参数有三个  
 -trainfasta  
 -trainpos  
 -trainneg  
