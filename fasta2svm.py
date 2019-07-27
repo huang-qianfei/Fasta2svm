@@ -3,6 +3,7 @@ import sys
 sys.path.extend(["../../", "../", "./"])
 from sklearn.preprocessing import MinMaxScaler
 import math
+import re
 from sklearn.metrics import classification_report
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split, GridSearchCV
@@ -11,7 +12,6 @@ from sklearn import metrics
 from sklearn.model_selection import cross_val_predict
 import time
 import argparse
-from gensim.models import KeyedVectors
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import numpy as np
@@ -22,8 +22,8 @@ from gensim.models import word2vec
 # 将fatsa文件切分成单词默认为kmer切分
 # ======================================================================================================================
 # kmer切分 :b = [string[i:i + 3] for i in range(len(string)) if i < len(string) - 2]
-# 普通分词 : b = re.findall(r'.{4}', string)
-def save_wordfile(fastafile, wordfile, kmer):
+# 普通分词 : b = re.findall(r'.{3}', string)
+def save_wordfile(fastafile, wordfile, splite, kmer):
     f = open(fastafile)
     f1 = open(wordfile, "w")
     k = kmer - 1
@@ -35,7 +35,10 @@ def save_wordfile(fastafile, wordfile, kmer):
             flag = 1
             continue
         elif document.startswith(">") and flag == 1:
-            b = [string[i:i + kmer] for i in range(len(string)) if i < len(string) - k]
+            if splite == 0:
+                b = [string[i:i + kmer] for i in range(len(string)) if i < len(string) - k]
+            else:
+                b = re.findall(r'.{kmer}', string)
             word = " ".join(b)
             f1.write(word)
             f1.write("\n")
@@ -43,7 +46,10 @@ def save_wordfile(fastafile, wordfile, kmer):
         else:
             string += document
             string = string.strip()
-    b = [string[i:i + kmer] for i in range(len(string)) if i < len(string) - k]
+    if splite == 0:
+        b = [string[i:i + kmer] for i in range(len(string)) if i < len(string) - k]
+    else:
+        b = re.findall(r'.{kmer}', string)
     word = " ".join(b)
     f1.write(word)
     f1.write("\n")
@@ -52,7 +58,7 @@ def save_wordfile(fastafile, wordfile, kmer):
     f.close()
 
 
-def splite_word(trainfasta_file, trainword_file, kmer, testfasta_file, testword_file, flag):
+def splite_word(trainfasta_file, trainword_file, kmer, testfasta_file, testword_file, splite, flag):
     start_time1 = time.time()
     print("start to splite word ......................")
 
@@ -62,10 +68,10 @@ def splite_word(trainfasta_file, trainword_file, kmer, testfasta_file, testword_
     test_wordfile = testword_file
 
     # train set transform to word
-    save_wordfile(train_file, train_wordfile, kmer)
+    save_wordfile(train_file, train_wordfile, splite, kmer)
     # testing set transform to word
     if flag:
-        save_wordfile(test_file, test_wordfile, kmer)
+        save_wordfile(test_file, test_wordfile, splite, kmer)
     end_time1 = time.time()
     print("Time consuming：{}s\n".format(end_time1 - start_time1))
 
@@ -79,6 +85,7 @@ def save_csv(word_file, model, csv_file, b):
     feature = []
     outputfile = csv_file
     with open(word_file) as f:
+        # l = []
         words = f.readlines()
         for word in words:
             l = []
@@ -262,7 +269,6 @@ def main():
     parser.add_argument('-trainneg', required=True, type=int, help="trainneg")
     parser.add_argument('-traincsv', default="train.csv", help="csv file name of train set")
     # parameter of word2vec
-    parser.add_argument('-kmer', '-k', type=int, default=3, help="k-mer: k size")
     parser.add_argument('-b', default=0, help="Fill in the vector")
     parser.add_argument('-sg', type=int, default=1, help="")
     parser.add_argument('-hs', type=int, default=0, help="")
@@ -280,16 +286,23 @@ def main():
     parser.add_argument('-ss', type=bool, default=False, help="StandardScaler")
     parser.add_argument('-cv', type=int, default=10, help="cross validation")
     parser.add_argument('-n_job', '-n', default=-1, help="num of thread")
+    # splite
+    parser.add_argument('-kmer', '-k', type=int, default=3, help="k-mer: k size")
+    parser.add_argument('-splite', '-s', type=int, default=0, help="kmer splite(0) or normal splite(1)")
 
     args = parser.parse_args()
     print(args)
     flag = False
     if args.testfasta:
         flag = True
+    if args.splite == 0:
+        print("kmer splite !")
+    else:
+        print("normal splite !")
 
     start_time = time.time()
 
-    splite_word(args.trainfasta, args.trainword, args.kmer, args.testfasta, args.testword, flag)
+    splite_word(args.trainfasta, args.trainword, args.kmer, args.testfasta, args.testword, args.splite, flag)
 
     tocsv(args.trainword, args.testword, args.sg, args.hs, args.window_size, args.hidden_size, args.model,
           args.traincsv, args.testcsv, args.b, flag)
