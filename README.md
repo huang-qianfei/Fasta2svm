@@ -33,6 +33,6 @@ python fasta2svm.py
 -trainneg  
 *************************
 ### example  
-* python fatsa2svm.py -trainfasta   -trainpos num  -trainneg num
-* python fatsa2svm.py -trainfasta   -trainpos num  -trainneg num  -testfasta   -testpos num  -testneg num -mms True
+* python fatsa2svm.py -trainfasta xxx.fasta  -trainpos num  -trainneg num
+* python fatsa2svm.py -trainfasta xxx.fasta  -trainpos num  -trainneg num  -testfasta   -testpos num  -testneg num -mms True
 
