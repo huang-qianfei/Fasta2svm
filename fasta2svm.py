@@ -79,9 +79,9 @@ def save_csv(word_file, model, csv_file, b):
     feature = []
     outputfile = csv_file
     with open(word_file) as f:
-        l = []
         words = f.readlines()
         for word in words:
+            l = []
             cc = word.split(" ")
             for i in cc:
                 i = i.rstrip()
