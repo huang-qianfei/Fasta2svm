@@ -6,8 +6,7 @@ import math
 import re
 from sklearn.metrics import classification_report
 from sklearn.svm import SVC
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import GridSearchCV
 from sklearn import metrics
 from sklearn.model_selection import cross_val_predict
 import time
@@ -59,8 +58,6 @@ def save_wordfile(fastafile, wordfile, splite, kmer):
 
 
 def splite_word(trainfasta_file, trainword_file, kmer, testfasta_file, testword_file, splite, flag):
-    start_time1 = time.time()
-    print("start to splite word ......................")
 
     train_file = trainfasta_file
     train_wordfile = trainword_file
@@ -72,9 +69,6 @@ def splite_word(trainfasta_file, trainword_file, kmer, testfasta_file, testword_
     # testing set transform to word
     if flag:
         save_wordfile(test_file, test_wordfile, splite, kmer)
-    end_time1 = time.time()
-    print("Time consuming：{}s\n".format(end_time1 - start_time1))
-
 
 # ======================================================================================================================
 # 训练词向量并将文件转化为csv文件
@@ -101,11 +95,11 @@ def save_csv(word_file, model, csv_file, b):
             feature.append(np.mean(word_vec, axis=0))
         pd.DataFrame(feature).to_csv(outputfile, header=None, index=False)
 
-    print("model have been saved in file {}！\n".format(outputfile))
+    print("csv have been saved in file {}！\n".format(outputfile))
 
 
 def tocsv(trainword_file, testword_file, sg, hs, window, size, model_name, traincsv, testcsv, b, flag):
-    start_time = time.time()
+
     sentences = word2vec.LineSentence(trainword_file)
     model = word2vec.Word2Vec(sentences, sg=sg, hs=hs, min_count=1, window=window, size=size)
     model.wv.save_word2vec_format(model_name, binary=False)
@@ -116,10 +110,6 @@ def tocsv(trainword_file, testword_file, sg, hs, window, size, model_name, train
     if flag:
         save_csv(testword_file, model, testcsv, b)
 
-    end_time = time.time()
-    print("Time consuming：{}s\n".format(end_time - start_time))
-
-
 # ======================================================================================================================
 # svm
 # ======================================================================================================================
@@ -128,15 +118,9 @@ def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms,
     cv = cv
     cpu_num = n_job
     svc = SVC(probability=True)
-    # ==================================================================================================================
-    # 不带标签的csv数据读取
-    # ==================================================================================================================
 
     X = pd.read_csv(traincsv, header=None, sep=",")
     y = np.array([0] * trainpos + [1] * trainneg)
-
-    # X_train, X_test, y_train, y_test = train_test_split(
-    #     X, y, test_size=0.2, random_state=0)
 
     if flag:
         X1 = pd.read_csv(testcsv, header=None, sep=",")
@@ -158,30 +142,25 @@ def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms,
         if flag:
             X1 = scaler.transform(X1)
 
-    # ==================================================================================================================
-    # 设置网格搜索范围
-    # ==================================================================================================================
-    target_names = ['0', '1']
-    label = [0, 1]
-
-    a = [2 ** x for x in range(-2, 5)]
-    b = [2 ** x for x in range(-5, 2)]
-    parameters = [
-        {
-            'C': a,
-            'gamma': b,
-            'kernel': ['rbf']
-        },
-        {
-            'C': a,
-            'kernel': ['linear']
-        }
-    ]
 
     # ==================================================================================================================
-    # 网格搜索调参数
+    # 网格搜索
     # ==================================================================================================================
     def get_bestparameter(X, y):
+
+        a = [2 ** x for x in range(-2, 5)]
+        b = [2 ** x for x in range(-5, 2)]
+        parameters = [
+            {
+                'C': a,
+                'gamma': b,
+                'kernel': ['rbf']
+            },
+            {
+                'C': a,
+                'kernel': ['linear']
+            }
+        ]
         clf = GridSearchCV(svc, parameters, cv=cv, scoring='accuracy', n_jobs=cpu_num)
         clf.fit(X, y)
 
@@ -193,45 +172,20 @@ def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms,
 
     clf = get_bestparameter(X, y)
 
-    # ==================================================================================================================
-    # 评价指标
-    # ==================================================================================================================
-
-    def performance(labelArr, predictArr):
-        TP = 0.;
-        TN = 0.;
-        FP = 0.;
-        FN = 0.
-        for i in range(len(labelArr)):
-            if labelArr[i] == 1 and predictArr[i] == 1:
-                TP += 1.
-            if labelArr[i] == 1 and predictArr[i] == 0:
-                FN += 1.
-            if labelArr[i] == 0 and predictArr[i] == 1:
-                FP += 1.
-            if labelArr[i] == 0 and predictArr[i] == 0:
-                TN += 1.
-
-        SP = TN / (FP + TN)
-        precision = TP / (TP + FP)
-        recall = TP / (TP + FN)
-        GM = math.sqrt(recall * SP)
-        MCC = (TP * TN - FP * FN) / math.sqrt((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN))
-        return precision, recall, SP, GM, TP, TN, FP, FN, MCC
 
     # ==================================================================================================================
-    # 提供测试集
+    # 独立测试集
     # ==================================================================================================================
     if flag:
         print("------------------supplied the test set----------------------------")
         pre = clf.predict(X1)
 
         print("ACC:{}".format(metrics.accuracy_score(y1, pre)))
+        print("MCC:{}".format(metrics.matthews_corrcoef(y1, pre)))
         print(classification_report(y1, pre))
-        print(confusion_matrix(y1, pre))
-        precision, recall, SP, GM, TP, TN, FP, FN, MCC = performance(y1, pre)
-        print("MCC:{}".format(MCC))
-        print("TP:{},TN:{},FP:{},FN:{}".format(TP, TN, FP, FN))
+        print("confusion matrix\n")
+        print(pd.crosstab(pd.Series(y1, name='Actual'), pd.Series(pre, name='Predicted')))
+
 
     # ==================================================================================================================
     # 交叉验证
@@ -239,6 +193,7 @@ def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms,
 
     print("------------------------cv--------------------------")
     p = clf.best_params_
+    label = [0, 1]
     if clf.best_params_["kernel"] == "rbf":
         clf = SVC(C=p["C"], kernel=p["kernel"], gamma=p["gamma"], probability=True)
     else:
@@ -250,11 +205,11 @@ def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms,
 
     print("AUC:{}".format(ROC_AUC_area))
     print("ACC:{}".format(metrics.accuracy_score(y, predicted)))
-    print(classification_report(y, predicted, labels=label, target_names=target_names))
-    print(confusion_matrix(y, predicted))
-    precision, recall, SP, GM, TP, TN, FP, FN, MCC = performance(y, predicted)
-    print("MCC:{}".format(MCC))
-    print("TP:{},TN:{},FP:{},FN:{}".format(TP, TN, FP, FN))
+    print("MCC:{}\n".format(metrics.matthews_corrcoef(y, predicted)))
+    print(classification_report(y, predicted, labels=label))
+    print("confusion matrix\n")
+    print(pd.crosstab(pd.Series(y, name='Actual'), pd.Series(predicted, name='Predicted')))
+
 
 
 # ======================================================================================================================
