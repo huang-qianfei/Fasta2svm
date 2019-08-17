@@ -4,7 +4,7 @@ python fasta2svm.py
 * 参数设置
 
 |参数|取值|
-|:-:|:-:|  
+|:-:|:-|  
 |-trainfasta|xxx.fasta|    
 |-trainword|训练集分词的文件名. default=trainword.txt|   
 -trainpos|    	正例数  
