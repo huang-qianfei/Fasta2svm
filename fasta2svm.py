@@ -148,8 +148,8 @@ def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms,
     # ==================================================================================================================
     def get_bestparameter(X, y):
 
-        a = [2 ** x for x in range(-2, 4)]
-        b = [2 ** x for x in range(-4, 2)]
+        a = [2 ** x for x in range(-2, 5)]
+        b = [2 ** x for x in range(-5, 2)]
         parameters = [
             {
                 'C': a,
