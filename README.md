@@ -1,6 +1,4 @@
 # Fasta2svm
-
-python fasta2svm.py  
 ***********************
 &emsp;&emsp;将fasta序列kmer分词，然后通过word2vec训练词向量。再将序列中每一个词取出对应的向量，对一条序列的所有的词向量取平均为该序列的向量。 
 然后将生成的csv文件给svm进行优化分类。
