@@ -21,7 +21,7 @@
 -sg     |     		0:cbow   1:skip-gram .default =1 
 -hs      |     	0:Negative Sampling   1:Hierarchical softmax .default=0  
 -window_size|   	窗口大小  
--model      |	词向量文件名  default=model.model  
+-model      |	词向量模型文件名  default=model.model  
 -hidden_size|    	词向量的维度， default=100  
 -testfasta  | 	 xxx.fasta
 -testword   |	测试集分词文件名字，default=testword.txt  
@@ -33,6 +33,9 @@
 -cv   |		交叉验证折数  
 -n_job   |		线程数 default=最大线程  
 -splite/-s| 0:kmer splite; 1:normal splite .default=0
+-spmodel|加载自定义模型
+-iter|word2vec迭代次数
+-grad|是否网格搜索；默认False
 *********************************
 * 必须设置的参数有三个  
 -trainfasta  
