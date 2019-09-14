@@ -1,8 +1,11 @@
 import sys
 
 sys.path.extend(["../../", "../", "./"])
+import warnings
+
+warnings.filterwarnings("ignore")
 from sklearn.preprocessing import MinMaxScaler
-import math
+import gensim
 import re
 from sklearn.metrics import classification_report
 from sklearn.svm import SVC
@@ -58,7 +61,6 @@ def save_wordfile(fastafile, wordfile, splite, kmer):
 
 
 def splite_word(trainfasta_file, trainword_file, kmer, testfasta_file, testword_file, splite, flag):
-
     train_file = trainfasta_file
     train_wordfile = trainword_file
     test_file = testfasta_file
@@ -69,6 +71,7 @@ def splite_word(trainfasta_file, trainword_file, kmer, testfasta_file, testword_
     # testing set transform to word
     if flag:
         save_wordfile(test_file, test_wordfile, splite, kmer)
+
 
 # ======================================================================================================================
 # 训练词向量并将文件转化为csv文件
@@ -98,23 +101,26 @@ def save_csv(word_file, model, csv_file, b):
     print("csv have been saved in file {}！\n".format(outputfile))
 
 
-def tocsv(trainword_file, testword_file, sg, hs, window, size, model_name, traincsv, testcsv, b, flag):
-
-    sentences = word2vec.LineSentence(trainword_file)
-    model = word2vec.Word2Vec(sentences, sg=sg, hs=hs, min_count=1, window=window, size=size)
-    model.wv.save_word2vec_format(model_name, binary=False)
-    # model = KeyedVectors.load_word2vec_format(model_name, binary=False)
+def tocsv(trainword_file, testword_file, sg, hs, window, size, model_name, traincsv, testcsv, b, flag, iter, spmodel):
+    if spmodel:
+        print("loading model")
+        model = gensim.models.KeyedVectors.load_word2vec_format(model_name, binary=False)
+    else:
+        sentences = word2vec.LineSentence(trainword_file)
+        model = word2vec.Word2Vec(sentences, sg=sg, hs=hs, min_count=1, window=window, size=size, iter=iter)
+        model.wv.save_word2vec_format(model_name, binary=False)
 
     save_csv(trainword_file, model, traincsv, b)
 
     if flag:
         save_csv(testword_file, model, testcsv, b)
 
+
 # ======================================================================================================================
 # svm
 # ======================================================================================================================
 
-def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms, ss, flag):
+def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms, ss, flag, grad):
     cv = cv
     cpu_num = n_job
     svc = SVC(probability=True)
@@ -141,7 +147,6 @@ def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms,
         X = scaler.transform(X)
         if flag:
             X1 = scaler.transform(X1)
-
 
     # ==================================================================================================================
     # 网格搜索
@@ -170,34 +175,32 @@ def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms,
 
         return clf
 
-    clf = get_bestparameter(X, y)
+    # clf = get_bestparameter(X, y)
 
-
-    # ==================================================================================================================
-    # 独立测试集
-    # ==================================================================================================================
     if flag:
         print("------------------supplied the test set----------------------------")
+        if grad:
+            clf = get_bestparameter(X, y)
+        else:
+            clf = SVC(C=0.5, gamma=0.05)
+            clf.fit(X, y)
         pre = clf.predict(X1)
-
         print("ACC:{}".format(metrics.accuracy_score(y1, pre)))
         print("MCC:{}".format(metrics.matthews_corrcoef(y1, pre)))
         print(classification_report(y1, pre))
         print("confusion matrix\n")
         print(pd.crosstab(pd.Series(y1, name='Actual'), pd.Series(pre, name='Predicted')))
 
-
-    # ==================================================================================================================
-    # 交叉验证
-    # ==================================================================================================================
-
     print("------------------------cv--------------------------")
-    p = clf.best_params_
     label = [0, 1]
-    if clf.best_params_["kernel"] == "rbf":
-        clf = SVC(C=p["C"], kernel=p["kernel"], gamma=p["gamma"], probability=True)
+    if grad:
+        p = clf.best_params_
+        if clf.best_params_["kernel"] == "rbf":
+            clf = SVC(C=p["C"], kernel=p["kernel"], gamma=p["gamma"], probability=True)
+        else:
+            clf = SVC(C=p["C"], kernel=p["kernel"], probability=True)
     else:
-        clf = SVC(C=p["C"], kernel=p["kernel"], probability=True)
+        clf = SVC(C=0.5, gamma=0.05, probability=True)
 
     predicted = cross_val_predict(clf, X, y, cv=cv, n_jobs=cpu_num)
     y_predict_prob = cross_val_predict(clf, X, y, cv=cv, n_jobs=cpu_num, method='predict_proba')
@@ -209,7 +212,6 @@ def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms,
     print(classification_report(y, predicted, labels=label))
     print("confusion matrix\n")
     print(pd.crosstab(pd.Series(y, name='Actual'), pd.Series(predicted, name='Predicted')))
-
 
 
 # ======================================================================================================================
@@ -226,7 +228,9 @@ def main():
     # parameter of word2vec
     parser.add_argument('-b', default=0, help="Fill in the vector")
     parser.add_argument('-sg', type=int, default=1, help="")
+    parser.add_argument('-iter', type=int, default=5, help="")
     parser.add_argument('-hs', type=int, default=0, help="")
+    parser.add_argument('-spmodel', help="spmodel")
     parser.add_argument('-window_size', type=int, default=20, help="window size")
     parser.add_argument('-model', default="model.model", help="embedding model")
     parser.add_argument('-hidden_size', type=int, default=100, help="The dimension of word")
@@ -241,6 +245,7 @@ def main():
     parser.add_argument('-ss', type=bool, default=False, help="StandardScaler")
     parser.add_argument('-cv', type=int, default=10, help="cross validation")
     parser.add_argument('-n_job', '-n', default=-1, help="num of thread")
+    parser.add_argument('-grad', type=bool, default=False, help="grad")
     # splite
     parser.add_argument('-kmer', '-k', type=int, default=3, help="k-mer: k size")
     parser.add_argument('-splite', '-s', type=int, default=0, help="kmer splite(0) or normal splite(1)")
@@ -260,10 +265,10 @@ def main():
     splite_word(args.trainfasta, args.trainword, args.kmer, args.testfasta, args.testword, args.splite, flag)
 
     tocsv(args.trainword, args.testword, args.sg, args.hs, args.window_size, args.hidden_size, args.model,
-          args.traincsv, args.testcsv, args.b, flag)
+          args.traincsv, args.testcsv, args.b, flag, args.iter, args.spmodel)
 
     svm(args.traincsv, args.trainpos, args.trainneg, args.testcsv, args.testpos, args.testneg, args.cv, args.n_job,
-        args.mms, args.ss, flag)
+        args.mms, args.ss, flag, args.grad)
 
     end_time = time.time()
     print("end ............................")
