@@ -43,7 +43,13 @@
 -trainpos  
 -trainneg  
 *************************
-### example  
-* python fatsa2svm.py -trainfasta xxx.fasta  -trainpos num  -trainneg num
-* python fatsa2svm.py -trainfasta xxx.fasta  -trainpos num  -trainneg num  -testfasta   -testpos num  -testneg num -mms True
+### example
+* 交叉验证用法(默认10-fold)：
+```py
+python fatsa2svm.py -trainfasta xxx.fasta  -trainpos num  -trainneg num
+```
+独立测试用法：
+```py
+python fatsa2svm.py -trainfasta xxx.fasta  -trainpos num  -trainneg num  -testfasta   -testpos num  -testneg num -mms True
+```
 
