@@ -46,7 +46,7 @@
 ### Example
 交叉验证用法(默认10-fold)：
 ```py
-python fatsa2svm.py -trainfasta xxx.fasta  -trainpos num  -trainneg num
+python fasta2svm.py -trainfasta xxx.fasta  -trainpos num  -trainneg num
 ```
 独立测试用法：
 ```py
