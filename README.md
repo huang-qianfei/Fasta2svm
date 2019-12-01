@@ -50,6 +50,6 @@ python fatsa2svm.py -trainfasta xxx.fasta  -trainpos num  -trainneg num
 ```
 独立测试用法：
 ```py
-python fatsa2svm.py -trainfasta xxx.fasta  -trainpos num  -trainneg num  -testfasta   -testpos num  -testneg num -mms True
+python fasta2svm.py -trainfasta xxx.fasta  -trainpos num  -trainneg num  -testfasta XXX.fasta  -testpos num  -testneg num -mms True
 ```
 
