@@ -43,10 +43,10 @@
 -trainpos  
 -trainneg  
 * 常用的调节参数  
--grad： 网格搜索 
--spmodel：加载预训练词向量模型 
--splite：分词的方式，默认是kmer分词
--cv：交叉验证的折数
+-grad： 网格搜索  
+-spmodel：加载预训练词向量模型  
+-splite：分词的方式，默认是kmer分词  
+-cv：交叉验证的折数  
 -mms：归一化
 *************************
 ### Example
