@@ -192,7 +192,7 @@ def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms,
         print(pd.crosstab(pd.Series(y1, name='Actual'), pd.Series(pre, name='Predicted')))
 
     print("------------------------cv--------------------------")
-    label = [0, 1]
+   
     if grad:
         p = clf.best_params_
         if clf.best_params_["kernel"] == "rbf":
@@ -209,7 +209,7 @@ def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms,
     print("AUC:{}".format(ROC_AUC_area))
     print("ACC:{}".format(metrics.accuracy_score(y, predicted)))
     print("MCC:{}\n".format(metrics.matthews_corrcoef(y, predicted)))
-    print(classification_report(y, predicted, labels=label))
+    print(classification_report(y, predicted))
     print("confusion matrix\n")
     print(pd.crosstab(pd.Series(y, name='Actual'), pd.Series(predicted, name='Predicted')))
 
