@@ -209,7 +209,7 @@ def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms,
         print("AUC:{}".format(ROC_AUC_area))
         print("ACC:{}".format(metrics.accuracy_score(y, predicted)))
         print("MCC:{}\n".format(metrics.matthews_corrcoef(y, predicted)))
-        print(classification_report(y, predicted, labels=label))
+        print(classification_report(y, predicted))
         print("confusion matrix\n")
         print(pd.crosstab(pd.Series(y, name='Actual'), pd.Series(predicted, name='Predicted')))
 
