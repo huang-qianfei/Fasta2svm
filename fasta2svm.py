@@ -148,9 +148,7 @@ def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms,
         if flag:
             X1 = scaler.transform(X1)
 
-    # ==================================================================================================================
     # 网格搜索
-    # ==================================================================================================================
     def get_bestparameter(X, y):
 
         a = [2 ** x for x in range(-2, 5)]
@@ -190,29 +188,30 @@ def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms,
         print(classification_report(y1, pre))
         print("confusion matrix\n")
         print(pd.crosstab(pd.Series(y1, name='Actual'), pd.Series(pre, name='Predicted')))
-
-    print("------------------------cv--------------------------")
-   
-    if grad:
-        clf = get_bestparameter(X, y)
-        p = clf.best_params_
-        if clf.best_params_["kernel"] == "rbf":
-            clf = SVC(C=p["C"], kernel=p["kernel"], gamma=p["gamma"], probability=True)
-        else:
-            clf = SVC(C=p["C"], kernel=p["kernel"], probability=True)
+    
     else:
-        clf = SVC(C=0.5, gamma=0.05, probability=True)
+        print("------------------------cv--------------------------")
+        label = [0, 1]
+        if grad:
+            clf = get_bestparameter(X, y)
+            p = clf.best_params_
+            if clf.best_params_["kernel"] == "rbf":
+                clf = SVC(C=p["C"], kernel=p["kernel"], gamma=p["gamma"], probability=True)
+            else:
+                clf = SVC(C=p["C"], kernel=p["kernel"], probability=True)
+        else:
+            clf = SVC(C=0.5, gamma=0.05, probability=True)
 
-    predicted = cross_val_predict(clf, X, y, cv=cv, n_jobs=cpu_num)
-    y_predict_prob = cross_val_predict(clf, X, y, cv=cv, n_jobs=cpu_num, method='predict_proba')
-    ROC_AUC_area = metrics.roc_auc_score(y, y_predict_prob[:, 1])
+        predicted = cross_val_predict(clf, X, y, cv=cv, n_jobs=cpu_num)
+        y_predict_prob = cross_val_predict(clf, X, y, cv=cv, n_jobs=cpu_num, method='predict_proba')
+        ROC_AUC_area = metrics.roc_auc_score(y, y_predict_prob[:, 1])
 
-    print("AUC:{}".format(ROC_AUC_area))
-    print("ACC:{}".format(metrics.accuracy_score(y, predicted)))
-    print("MCC:{}\n".format(metrics.matthews_corrcoef(y, predicted)))
-    print(classification_report(y, predicted))
-    print("confusion matrix\n")
-    print(pd.crosstab(pd.Series(y, name='Actual'), pd.Series(predicted, name='Predicted')))
+        print("AUC:{}".format(ROC_AUC_area))
+        print("ACC:{}".format(metrics.accuracy_score(y, predicted)))
+        print("MCC:{}\n".format(metrics.matthews_corrcoef(y, predicted)))
+        print(classification_report(y, predicted, labels=label))
+        print("confusion matrix\n")
+        print(pd.crosstab(pd.Series(y, name='Actual'), pd.Series(predicted, name='Predicted')))
 
 
 # ======================================================================================================================
