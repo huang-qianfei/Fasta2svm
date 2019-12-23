@@ -104,7 +104,7 @@ def save_csv(word_file, model, csv_file, b):
 def tocsv(trainword_file, testword_file, sg, hs, window, size, model_name, traincsv, testcsv, b, flag, iter, spmodel):
     if spmodel:
         print("loading model")
-        model = gensim.models.KeyedVectors.load_word2vec_format(model_name, binary=False)
+        model = gensim.models.KeyedVectors.load_word2vec_format(spmodel, binary=False)
     else:
         sentences = word2vec.LineSentence(trainword_file)
         model = word2vec.Word2Vec(sentences, sg=sg, hs=hs, min_count=1, window=window, size=size, iter=iter)
