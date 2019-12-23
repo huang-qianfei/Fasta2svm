@@ -194,6 +194,7 @@ def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms,
     print("------------------------cv--------------------------")
    
     if grad:
+        clf = get_bestparameter(X, y)
         p = clf.best_params_
         if clf.best_params_["kernel"] == "rbf":
             clf = SVC(C=p["C"], kernel=p["kernel"], gamma=p["gamma"], probability=True)
