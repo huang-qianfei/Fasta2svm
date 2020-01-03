@@ -40,7 +40,7 @@ def save_wordfile(fastafile, wordfile, splite, kmer):
             if splite == 0:
                 b = [string[i:i + kmer] for i in range(len(string)) if i < len(string) - k]
             else:
-                b = re.findall(r'.{kmer}', string)
+                b = re.findall(r'.{3}', string)
             word = " ".join(b)
             f1.write(word)
             f1.write("\n")
