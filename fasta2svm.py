@@ -24,7 +24,7 @@ from gensim.models import word2vec
 # 将fatsa文件切分成单词默认为kmer切分
 # ======================================================================================================================
 # kmer切分 :b = [string[i:i + 3] for i in range(len(string)) if i < len(string) - 2]
-# 普通分词 : b = re.findall(r'.{3}', string)
+# 普通分词 :b = [string[i:i + kmer] for i in range(0, len(string), kmer) if i < len(string) - k]
 def save_wordfile(fastafile, wordfile, splite, kmer):
     f = open(fastafile)
     f1 = open(wordfile, "w")
@@ -40,7 +40,7 @@ def save_wordfile(fastafile, wordfile, splite, kmer):
             if splite == 0:
                 b = [string[i:i + kmer] for i in range(len(string)) if i < len(string) - k]
             else:
-                b = re.findall(r'.{3}', string)
+                b = [string[i:i + kmer] for i in range(0, len(string), kmer) if i < len(string) - k]
             word = " ".join(b)
             f1.write(word)
             f1.write("\n")
@@ -51,7 +51,7 @@ def save_wordfile(fastafile, wordfile, splite, kmer):
     if splite == 0:
         b = [string[i:i + kmer] for i in range(len(string)) if i < len(string) - k]
     else:
-        b = re.findall(r'.{kmer}', string)
+        b = [string[i:i + kmer] for i in range(0, len(string), kmer) if i < len(string) - k]
     word = " ".join(b)
     f1.write(word)
     f1.write("\n")
