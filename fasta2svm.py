@@ -20,9 +20,9 @@ import numpy as np
 from gensim.models import word2vec
 
 
-# 将fatsa文件切分成单词默认为kmer切分
-# kmer切分 :b = [string[i:i + 3] for i in range(len(string)) if i < len(string) - 2]
-# 普通分词 :b = [string[i:i + kmer] for i in range(0, len(string), kmer) if i < len(string) - k]
+# splite the sequence
+# kmer :b = [string[i:i + 3] for i in range(len(string)) if i < len(string) - 2]
+# normal :b = [string[i:i + kmer] for i in range(0, len(string), kmer) if i < len(string) - k]
 def save_wordfile(fastafile, wordfile, splite, kmer):
     f = open(fastafile)
     f1 = open(wordfile, "w")
@@ -71,7 +71,7 @@ def splite_word(trainfasta_file, trainword_file, kmer, testfasta_file, testword_
         save_wordfile(test_file, test_wordfile, splite, kmer)
 
 
-# 训练词向量并将文件转化为csv文件
+# convert embedding to csv
 def save_csv(word_file, model, csv_file, b):
     wv = model.wv
     vocab_list = wv.index2word
@@ -111,8 +111,6 @@ def tocsv(trainword_file, testword_file, sg, hs, window, size, model_name, train
     if flag:
         save_csv(testword_file, model, testcsv, b)
 
-
-
 # svm
 def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms, ss, flag, grad):
     cv = cv
@@ -142,7 +140,7 @@ def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms,
         if flag:
             X1 = scaler.transform(X1)
 
-    # 网格搜索
+    # GridSearch
     def get_bestparameter(X, y):
 
         a = [2 ** x for x in range(-2, 5)]
@@ -207,16 +205,16 @@ def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms,
         print("confusion matrix\n")
         print(pd.crosstab(pd.Series(y, name='Actual'), pd.Series(predicted, name='Predicted')))
 
-# 主函数
+# main
 def main():
     parser = argparse.ArgumentParser()
-    # parameter of train set
+    # train set
     parser.add_argument('-trainfasta', required=True, help="trainfasta file name")
     parser.add_argument('-trainword', default="trainword.txt", help="file name of train set")
     parser.add_argument('-trainpos', required=True, type=int, help="trainpos")
     parser.add_argument('-trainneg', required=True, type=int, help="trainneg")
     parser.add_argument('-traincsv', default="train.csv", help="csv file name of train set")
-    # parameter of word2vec
+    # word2vec
     parser.add_argument('-b', default=0, help="Fill in the vector")
     parser.add_argument('-sg', type=int, default=1, help="")
     parser.add_argument('-iter', type=int, default=5, help="")
@@ -225,7 +223,7 @@ def main():
     parser.add_argument('-window_size', type=int, default=20, help="window size")
     parser.add_argument('-model', default="model.model", help="embedding model")
     parser.add_argument('-hidden_size', type=int, default=100, help="The dimension of word")
-    # parameter of testing set
+    # testing set
     parser.add_argument('-testfasta', help="testfasta file name")
     parser.add_argument('-testword', default="testword.txt", help="file name of testing set")
     parser.add_argument('-testpos', type=int, help="testpos")
