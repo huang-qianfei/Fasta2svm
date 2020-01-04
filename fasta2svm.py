@@ -20,9 +20,7 @@ import numpy as np
 from gensim.models import word2vec
 
 
-# ======================================================================================================================
 # 将fatsa文件切分成单词默认为kmer切分
-# ======================================================================================================================
 # kmer切分 :b = [string[i:i + 3] for i in range(len(string)) if i < len(string) - 2]
 # 普通分词 :b = [string[i:i + kmer] for i in range(0, len(string), kmer) if i < len(string) - k]
 def save_wordfile(fastafile, wordfile, splite, kmer):
@@ -73,9 +71,7 @@ def splite_word(trainfasta_file, trainword_file, kmer, testfasta_file, testword_
         save_wordfile(test_file, test_wordfile, splite, kmer)
 
 
-# ======================================================================================================================
 # 训练词向量并将文件转化为csv文件
-# ======================================================================================================================
 def save_csv(word_file, model, csv_file, b):
     wv = model.wv
     vocab_list = wv.index2word
@@ -116,10 +112,8 @@ def tocsv(trainword_file, testword_file, sg, hs, window, size, model_name, train
         save_csv(testword_file, model, testcsv, b)
 
 
-# ======================================================================================================================
-# svm
-# ======================================================================================================================
 
+# svm
 def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms, ss, flag, grad):
     cv = cv
     cpu_num = n_job
@@ -213,10 +207,7 @@ def svm(traincsv, trainpos, trainneg, testcsv, testpos, testneg, cv, n_job, mms,
         print("confusion matrix\n")
         print(pd.crosstab(pd.Series(y, name='Actual'), pd.Series(predicted, name='Predicted')))
 
-
-# ======================================================================================================================
 # 主函数
-# ======================================================================================================================
 def main():
     parser = argparse.ArgumentParser()
     # parameter of train set
