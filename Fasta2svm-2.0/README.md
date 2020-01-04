@@ -9,38 +9,38 @@
 *****************************
 ### train 参数设置
 
-|参数|取值|
+|parameters|values|
 |:-|:-|  
 |-t|class1.fasta;class2.fasta 。。。|    
 |-o|model name|   
--kmer/-k|       	 k-mer. default:k=3  
--b     |           padding，default:b=0  
--sg     |     		0:cbow   1:skip-gram .default =1 
--hs      |     	0:Negative Sampling   1:Hierarchical softmax .default=0  
+-kmer/-k|       	 k-mer,default:k=3  
+-b     |           padding,default:b=0  
+-sg     |     		0:cbow ,  1:skip-gram .default =1 
+-hs      |     	0:Negative Sampling,   1:Hierarchical softmax .default=0  
 -window_size|   	word2vec window size  
--model_name      |	embedding model name  default=model.model  
--hidden_size|    	dim of embedding vector， default=100  
--mms   |		   MinMaxScaler. default=False    
--ss     | 		 StandardScaler. default=False 
+-model_name      |	embedding model name , default=model.model  
+-hidden_size|    	dim of embedding vector, default=100  
+-mms   |		   MinMaxScaler, default=False    
+-ss     | 		 StandardScaler, default=False 
 -cv   |		default:10-fold 
 -n_job   |		 default=(-1)
--splite/-s| 0:kmer splite; 1:normal splite .default=0
+-splite/-s| 0:kmer splite, 1:normal splite .default=0
 -premodel|pre-train model
 -iter|iter-num of word2vec
--grad|GridSearch default:False
+-grad|GridSearch, default:False
 *********************************
 ### predict 参数设置
 
-|参数|取值|
+|parameters|values|
 |:-|:-|  
-|-t|类别1.fasta;类别2.fasta 。。。|    
--m|      model
--kmer/-k|       	 k-mer. default:k=3  
--b     |           padding，default:b=0  
+|-t|class1.fasta;class2.fasta 。。。|    
+-m|      classifier model
+-kmer/-k|       	 k-mer, default:k=3  
+-b     |           padding,default:b=0  
 -em      |	embedding model,  default=model.model  
--mms   |		   MinMaxScaler. default=False    
--ss     | 		 StandardScaler. default=False 
--splite/-s| 0:kmer splite; 1:normal splite .default=0
+-mms   |		   MinMaxScaler, default=False    
+-ss     | 		 StandardScaler, default=False 
+-splite/-s| 0:kmer splite, 1:normal splite .default=0
 
 *********************************
 
