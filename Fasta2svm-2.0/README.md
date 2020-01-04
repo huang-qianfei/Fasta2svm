@@ -11,35 +11,35 @@
 
 |参数|取值|
 |:-|:-|  
-|-t|xxx.fasta|    
-|-o|model|   
--kmer/-k|       	 kmer分词的k取值. default=3  
--b     |           当模型中不存在该词的词向量的时候用b填充，default=0  
+|-t|class1.fasta;class2.fasta 。。。|    
+|-o|model name|   
+-kmer/-k|       	 k-mer. default:k=3  
+-b     |           padding，default:b=0  
 -sg     |     		0:cbow   1:skip-gram .default =1 
 -hs      |     	0:Negative Sampling   1:Hierarchical softmax .default=0  
--window_size|   	窗口大小  
--model_name      |	词向量模型文件名  default=model.model  
--hidden_size|    	词向量的维度， default=100  
--mms   |		   是否使用归一化. default=False    
--ss     | 		 是否使用标准化. default=False 
--cv   |		交叉验证折数, default10-fold 
--n_job   |		线程数 default=(-1)最大线程  
+-window_size|   	word2vec window size  
+-model_name      |	embedding model name  default=model.model  
+-hidden_size|    	dim of embedding vector， default=100  
+-mms   |		   MinMaxScaler. default=False    
+-ss     | 		 StandardScaler. default=False 
+-cv   |		default:10-fold 
+-n_job   |		 default=(-1)
 -splite/-s| 0:kmer splite; 1:normal splite .default=0
--premodel|加载预训练词向量模型
--iter|word2vec迭代次数
--grad|是否网格搜索；默认False
+-premodel|pre-train model
+-iter|iter-num of word2vec
+-grad|GridSearch default:False
 *********************************
 ### predict 参数设置
 
 |参数|取值|
 |:-|:-|  
 |-t|类别1.fasta;类别2.fasta 。。。|    
--m|      模型
--kmer/-k|       	 kmer分词的k取值. default=3  
--b     |           当模型中不存在该词的词向量的时候用b填充，default=0  
--em      |	词向量模型文件名  default=model.model  
--mms   |		   是否使用归一化. default=False    
--ss     | 		 是否使用标准化. default=False 
+-m|      model
+-kmer/-k|       	 k-mer. default:k=3  
+-b     |           padding，default:b=0  
+-em      |	embedding model,  default=model.model  
+-mms   |		   MinMaxScaler. default=False    
+-ss     | 		 StandardScaler. default=False 
 -splite/-s| 0:kmer splite; 1:normal splite .default=0
 
 *********************************
