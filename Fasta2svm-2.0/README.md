@@ -56,7 +56,7 @@ train：
 ```py
 python train.py -i 1.fasta 2.fasta -o svm.pkl
 ```
-test：
+predict：
 ```py
 python predict.py -t 1.fasta 2.fasta -m svm.pkl -em model.model
 ```
