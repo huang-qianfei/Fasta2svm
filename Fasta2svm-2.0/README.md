@@ -14,7 +14,6 @@
 |:-|:-|  
 |-t|xxx.fasta|    
 |-o|model|   
-
 -kmer/-k|       	 kmer分词的k取值. default=3  
 -b     |           当模型中不存在该词的词向量的时候用b填充，default=0  
 -sg     |     		0:cbow   1:skip-gram .default =1 
