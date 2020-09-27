@@ -22,7 +22,7 @@
 -hidden_size|    	dim of embedding vector, default=100  
 -mms   |		   MinMaxScaler, default=False    
 -ss     | 		 StandardScaler, default=False 
--cv   |		default:10-fold 
+-cv   |		x
 -n_job   |		 default=(-1)
 -splite/-s| 0:kmer splite, 1:normal splite .default=0
 -premodel|pre-train model
