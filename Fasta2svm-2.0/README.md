@@ -52,7 +52,7 @@
 -mms：归一化
 *************************
 ### Example
-* 这里1.fasta ，2.fasta分别对应这一个类别的fasta文件；
+* 这里1.fasta ，2.fasta分别对应这一个类别的fasta文件； 
 train：
 ```py
 python train.py -i 1.fasta 2.fasta -o svm.pkl
